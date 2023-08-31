@@ -20,7 +20,7 @@ extension URLRequest {
         if debugVerbosity > 0 {
             print(asCurl)
         } else {
-            print("➡️", url?.absoluteString ?? "URL??")
+            print(httpMethod ?? "", "➡️", url?.absoluteString ?? "URL??")
         }
         print(String(repeating: "=", count: debugHeaderLength))
 #endif
