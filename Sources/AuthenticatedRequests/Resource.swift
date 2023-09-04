@@ -110,6 +110,8 @@ private extension Resource {
             let token = try await authenticated.authenticator.validToken()
             request.authenticated(with: token, headerField: authenticated.authHeader)
         }
+        
+        request.httpMethod = self.httpMethod.rawValue
         request.debug()
         
         return request
