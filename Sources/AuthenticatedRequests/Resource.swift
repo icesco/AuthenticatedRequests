@@ -39,10 +39,11 @@ public extension Resource where Output: Codable {
     /// - Parameter parameter: The input parameter that is necessary to build the URLRequest.
     /// - Returns: Returns the received data decoded into the expected output type, or throws an error.
     func request(using parameter: Input,
+                 userAgent: String = "AuthenticatedRequests iOS",
                  urlConfiguration: URLSessionConfiguration? = nil) async throws -> Output {
         
-        let request = try await urlRequest(with: parameter)
-        let session = session(urlConfiguration: urlConfiguration)
+        let request = try await urlRequest(with: parameter, userAgent: userAgent)
+        let session = Self.session(urlConfiguration: urlConfiguration)
         
         let (data, response): (Data, URLResponse)
         if #available(iOS 15.0, macOS 12.0, *) {
@@ -77,10 +78,11 @@ public extension Resource where Output == URL {
     /// - Parameter parameter: The input parameter that is necessary to build the URLRequest.
     /// - Returns: Returns the received data decoded into the expected output type, or throws an error.
     func download(using parameter: Input,
+                  userAgent: String = "AuthenticatedRequests iOS",
                   urlConfiguration: URLSessionConfiguration? = nil) async throws -> Output {
         
-        let request = try await urlRequest(with: parameter)
-        let session = session(urlConfiguration: urlConfiguration)
+        let request = try await urlRequest(with: parameter, userAgent: userAgent)
+        let session = Self.session(urlConfiguration: urlConfiguration)
         
         let (filesystemURL, response): (URL, URLResponse)
         if #available(iOS 15.0, macOS 12.0, *) {
@@ -101,10 +103,10 @@ public extension Resource where Output == URL {
 
 private extension Resource {
     
-    private func urlRequest(with parameter: Input) async throws -> URLRequest {
+    private func urlRequest(with parameter: Input, userAgent: String) async throws -> URLRequest {
         
         var request = try urlRequest(using: parameter)
-        
+        request.setValue(userAgent, forHTTPHeaderField: "User-Agent")
         // If the resource is also authenticated, wee need to embedd an authentication token.
         if let authenticated = self as? AuthenticatedResource {
             let token = try await authenticated.authenticator.validToken()
