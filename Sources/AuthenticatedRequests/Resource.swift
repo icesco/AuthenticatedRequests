@@ -58,6 +58,10 @@ public extension Resource where Output: Codable {
         // We first validate the URLResponse that we received in order to check if everything went ok.
         try validateResponse(response, data: data)
         
+        return try decodeData(data: data)
+    }
+    
+    private func decodeData(data: Data) throws -> Output {
         if Output.self == String.self {
             if let dataStr = (String(data: data, encoding: .utf8) ?? "") as? Self.Output {
                 return dataStr
@@ -119,7 +123,7 @@ private extension Resource {
         return request
     }
     
-    private func session(urlConfiguration: URLSessionConfiguration? = nil) -> URLSession {
+    private static func session(urlConfiguration: URLSessionConfiguration? = nil) -> URLSession {
         
         let session: URLSession
         if let urlConfiguration {

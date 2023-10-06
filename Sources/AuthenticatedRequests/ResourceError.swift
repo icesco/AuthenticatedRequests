@@ -14,6 +14,7 @@ public enum ResourceError: Error, LocalizedError {
     case notHttpResponse
     case badURL
     case badDataType
+    case unexpectedError(message: String)
     
     public var localizedDescription: String {
         switch self {
@@ -30,6 +31,8 @@ public enum ResourceError: Error, LocalizedError {
             return "The url cannot be built."
         case .badDataType:
             return "Unknown data type."
+        case .unexpectedError(message: let message):
+            return "An unexpected error occurred: \(message)"
         }
     }
     
